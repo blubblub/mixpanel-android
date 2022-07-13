@@ -27,13 +27,11 @@ public class MPConfigTest {
         assertEquals("https://api.mixpanel.com/track/?ip=1", config.getEventsEndpoint());
         assertEquals("https://api.mixpanel.com/engage/?ip=1", config.getPeopleEndpoint());
         assertEquals("https://api.mixpanel.com/groups/?ip=1", config.getGroupsEndpoint());
-        assertEquals("https://api.mixpanel.com/decide", config.getDecideEndpoint());
 
         mixpanelAPI.setServerURL("https://api-eu.mixpanel.com");
         assertEquals("https://api-eu.mixpanel.com/track/?ip=1", config.getEventsEndpoint());
         assertEquals("https://api-eu.mixpanel.com/engage/?ip=1", config.getPeopleEndpoint());
         assertEquals("https://api-eu.mixpanel.com/groups/?ip=1", config.getGroupsEndpoint());
-        assertEquals("https://api-eu.mixpanel.com/decide", config.getDecideEndpoint());
     }
 
     @Test
@@ -49,13 +47,11 @@ public class MPConfigTest {
         assertEquals("https://api.mixpanel.com/track/?ip=0", config.getEventsEndpoint());
         assertEquals("https://api.mixpanel.com/engage/?ip=0", config.getPeopleEndpoint());
         assertEquals("https://api.mixpanel.com/groups/?ip=0", config.getGroupsEndpoint());
-        assertEquals("https://api.mixpanel.com/decide", config.getDecideEndpoint());
 
         mixpanelAPI.setUseIpAddressForGeolocation(true);
         assertEquals("https://api.mixpanel.com/track/?ip=1", config.getEventsEndpoint());
         assertEquals("https://api.mixpanel.com/engage/?ip=1", config.getPeopleEndpoint());
         assertEquals("https://api.mixpanel.com/groups/?ip=1", config.getGroupsEndpoint());
-        assertEquals("https://api.mixpanel.com/decide", config.getDecideEndpoint());
     }
 
     @Test
@@ -148,6 +144,6 @@ public class MPConfigTest {
     }
 
     private MixpanelAPI mixpanelApi(final MPConfig config) {
-        return new MixpanelAPI(InstrumentationRegistry.getInstrumentation().getContext(), new TestUtils.EmptyPreferences(InstrumentationRegistry.getInstrumentation().getContext()), TOKEN, config, false, null,null);
+        return new MixpanelAPI(InstrumentationRegistry.getInstrumentation().getContext(), new TestUtils.EmptyPreferences(InstrumentationRegistry.getInstrumentation().getContext()), TOKEN, config, false, null,null, true);
     }
 }
