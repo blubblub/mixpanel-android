@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-/* package */ class MixpanelActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
+public class MixpanelActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable check;
     private boolean mIsForeground = false;
