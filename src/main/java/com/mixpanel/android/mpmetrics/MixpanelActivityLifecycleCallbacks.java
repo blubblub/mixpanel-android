@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,13 +15,12 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-/* package */ class MixpanelActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
+public class MixpanelActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable check;
     private boolean mIsForeground = false;
     private boolean mPaused = true;
     private static Double sStartSessionTime;
-    public static final int CHECK_DELAY = 500;
 
     public MixpanelActivityLifecycleCallbacks(MixpanelAPI mpInstance, MPConfig config) {
         mMpInstance = mpInstance;
@@ -31,20 +31,26 @@ import java.lang.ref.WeakReference;
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
-    }
+    public void onActivityStarted(Activity activity) { }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) { }
 
     @Override
     public void onActivityPaused(final Activity activity) {
+        // no-op
+    }
+
+    public void onActivityPaused(long sessionSaveDelay) {
         mPaused = true;
 
         if (check != null) {
             mHandler.removeCallbacks(check);
         }
         mCurrentActivity = null;
+
+        Log.d("MixpanelLifecycle", "Activity pause.");
+        Log.d("MixpanelLifecycle", String.format("Session end scheduled to %s ms from now.", sessionSaveDelay));
 
         mHandler.postDelayed(check = new Runnable(){
             @Override
@@ -61,6 +67,7 @@ import java.lang.ref.WeakReference;
                             mMpInstance.getPeople().increment(AutomaticEvents.TOTAL_SESSIONS, 1);
                             mMpInstance.getPeople().increment(AutomaticEvents.TOTAL_SESSIONS_LENGTH, elapsedTimeRounded);
                             mMpInstance.track(AutomaticEvents.SESSION, sessionProperties, true);
+                            Log.d("MixpanelLifecycle", "Session saved.");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -68,7 +75,7 @@ import java.lang.ref.WeakReference;
                     mMpInstance.onBackground();
                 }
             }
-        }, CHECK_DELAY);
+        }, sessionSaveDelay);
     }
 
     @Override
@@ -79,7 +86,11 @@ import java.lang.ref.WeakReference;
 
     @Override
     public void onActivityResumed(Activity activity) {
-        mCurrentActivity = new WeakReference<>(activity);
+        // no-op
+    }
+
+    public void onActivityResumed() {
+        Log.d("MixpanelLifecycle", "Activity resume.");
 
         mPaused = false;
         boolean wasBackground = !mIsForeground;
